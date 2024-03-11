@@ -17,12 +17,13 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
+        
         <VerticalStackLayout>
-            <SearchBar x:Name="txt_search" Margin="-10, 0, 0, 0"
-                       Placeholder="Busca de Produtos"/>
+            <SearchBar x:Name="txt_search" Margin="-10, 0, 0, 0" Placeholder="Busca de Produtos"/>
             <RefreshView x:Name="ref_carregando" IsRefreshing="False"/>
 
             <ListView x:Name="lst_produtos">
+
                 <ListView.Header>
                     <Grid ColumnDefinitions="3*, *, *, *">
                         <Label Grid.Column="0" Text="Produto"/>
@@ -31,9 +32,25 @@
                         <Label Grid.Column="3" Text="Total"/>
                     </Grid>
                 </ListView.Header>
-                
+
+                <ListView.ItemTemplate>
+
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.ContextActions>
+                                <MenuItem Text="Remover"/>
+                            </ViewCell.ContextActions>
+                            <Grid RowDefinitions="Auto" ColumnDefinitions="*, Auto, Auto">
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding Descricao}"/>
+                                <Label Grid.Row="0" Grid.Column="1" Text="{Binding Quantidade}"/>
+                                <Label Grid.Row="0" Grid.Column="2" Text="{Binding Preco}"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+
             </ListView>
         </VerticalStackLayout>
     </ContentPage.Content>
-    
 </ContentPage>
