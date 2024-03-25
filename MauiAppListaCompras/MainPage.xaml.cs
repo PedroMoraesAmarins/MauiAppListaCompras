@@ -20,39 +20,34 @@ namespace MauiAppListaCompras
             DisplayAlert("Somatória", msg,"Fechar");
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             if(lista_produtos.Count == 0) 
             {
-                Task.Run(async () =>
-                {
                     List<Produto> tmp = await App.Db.GetAll();
                     foreach (Produto p in tmp) 
                     { 
                         lista_produtos.Add(p);
                     }
-                }); // Fecha task
             } // Fecha if
             base.OnAppearing(); 
         }
 
         private async void ToolbarItem_Clicked_Add(System.Object sender, System.EventArgs e)
         {
-            await Shell.Current.GoToAsync("//NovoProduto");
+            await Navigation.PushAsync(new Views.NovoProduto2());
         }
 
-        private void txt_search_TextChanged(System.Object sender, Microsoft.Maui.Controls.TextChangedEventArgs e)
+        private async void txt_search_TextChanged(System.Object sender, Microsoft.Maui.Controls.TextChangedEventArgs e)
         {
             string q = e.NewTextValue;
             lista_produtos.Clear();
-            Task.Run(async () =>
+
+            List<Produto> tmp = await App.Db.Search(q);
+            foreach (Produto p in tmp) 
             {
-                List<Produto> tmp = await App.Db.Search(q);
-                foreach (Produto p in tmp) 
-                {
-                    lista_produtos.Add(p);
-                } 
-            });
+               lista_produtos.Add(p);
+            } 
         }
 
         private void ref_carregando_Refreshing(System.Object sender, System.EventArgs e)
@@ -71,7 +66,12 @@ namespace MauiAppListaCompras
 
         private void lst_produtos_ItemSelected(System.Object sender, Microsoft.Maui.Controls.SelectedItemChangedEventArgs e)
         {
+            Produto? p = e.SelectedItem as Produto;
 
+            Navigation.PushAsync(new Views.EditarProduto2
+            {
+                BindingContext = p
+            });
         }
 
         private async void MenuItem_Clicked_Remover(System.Object sender, System.EventArgs e)
@@ -84,10 +84,12 @@ namespace MauiAppListaCompras
 
                 bool confirm = await DisplayAlert(
                     "Tem certeza?", "Remover Produto?", "Sim", "Cancelar");
+
                 if (confirm) 
                 {
                     await App.Db.Delete(p.Id);
                     await DisplayAlert("Sucesso!", "Produto Removido", "OK");
+                    lista_produtos.Remove(p);
                 }
             }
             catch (Exception ex) 

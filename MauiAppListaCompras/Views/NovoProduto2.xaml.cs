@@ -13,14 +13,16 @@ public partial class NovoProduto2 : ContentPage
     {
 		try 
 		{ 
-			Produto p = new Produto();
+			Produto p = new Produto
 			{
 				Descricao = txt_descricao.Text,
 				Quantidade = Convert.ToDouble(txt_quantidade.Text),
-			    Preco = Convert.ToDouble(txt_preco.Text);	
+				Preco = Convert.ToDouble(txt_preco.Text),	
 			};
+
 			 await App.Db.Insert(p);
-			 await DisplayAlert("Sucesso!", "Produto inserido", "OK"); 
+			 await DisplayAlert("Sucesso!", "Produto inserido", "OK");
+			 await Navigation.PushAsync(new MainPage());
 		} 
 		catch (Exception ex) 
 		{ 
